@@ -1,0 +1,73 @@
+VHK = 20*mV      #Half-activation voltage for the potassium conductance
+VSK = 13.8*mV    #Activation sensitivity for the potassium conductance
+KCa = 250*nanomolar #Half-activation calcium concentration      ****************unit change
+beta = 0.05      #Ratio of free to buffered calcium
+PCa = 0.25* nanometers/s #Maximum rate of Ca2+ transport by the pump  # ********************unit change
+zCa = 2          #Valance of calcium
+F = 0.096485 * C/ micromolar # ******************unit change
+alpha = 1/(zCa*F)
+rs = 10*micrometers #Soma radii ******************unit change
+rd = 0.5*micrometers #Dendritic radii ******************unit change
+nd = 10          #Number of small identical dendritic compartments attached to the soma
+gc = 2.5*mS/cm**2  # Strength of the coupling
+ls = 1*micrometers   # Somatic length ******************unit change
+ld = 1*micrometers   # Dendritic length *****************unit change
+C = 1*microF/cm**2   # Membrane capacitance ******************unit change
+
+
+E_Na = 55*mV
+E_Ks = ??????
+E_CaL = ?????
+E_L = -50*mV
+
+
+gbar_Na = 150mS/cm**2
+gbar_Ks = 4*mS/cm**2
+gbar_Ca = 0.20*mS/cm**2
+gbar_K = 0.4*mS/cm**2
+gbar_KCa = 0.3*mS/cm**2
+
+n =                    #gating variable for activation of the delayed rectifier potassium conductance
+
+Vs = 10
+
+# alpha = rate by which the channels switch from a closed to open state
+# beta = rate for the open to closed transition
+alpha_m = -0.32*(Vs +33)/(exp(-(Vs+33)/4.5)-1)
+beta_m = 0.28*(Vs+4)/(exp((Vs+4)/10.4)-1)
+alpha_h = 0.0196*exp(-(Vs+47)/18)
+beta_h = 2.45/(1+exp(-(Vs+24)/4))
+alpha_n = -0.3584*((Vs-2)/exp(-(Vs+2)/3)-1)
+beta_n = 0.56*exp(-(Vs+20)/5.8)
+alpha_c = ??????????????????
+beta_c = ???????????????
+
+m_inf = alpha_m / (alpha_m+beta_m)    #instantaneous sodium activation steady-state function
+
+dh/dt = alpha_h*(1-h) - beta_h*h
+dc/dt = alpha_c*(1-c) - beta_c*c
+d(Cacon)/dt = 2*beta*(alpha*I_Ca - P_Ca*Cacon)/rs
+
+g_Na = gbar_Na * (m_inf*m_inf*m_inf)*h
+g_Ks = g_bar_Ks * n*n*n*n              #g_Ks = g_Ks(n)
+g_CaL = g_bar_CaL*(alpha_c/(alpha_c+beta_c))*(alpha_c/(alpha_c+beta_c))*(alpha_c/(alpha_c+beta_c))*(alpha_c/(alpha_c+beta_c))
+g_K = g_bar_K *(1/(1+exp(-(Vs-V_HK)/V_SK)))
+g_KCa = g_bar_KCa * (Cacon*Cacon*Cacon*Cacon)/(Cacon*Cacon*Cacon*Cacon+KCa*KCa*KCa*KCa)
+g_L = 0.05*mS/cm**2
+
+I_Na(Vs,hs) = g_Na * (m_inf***3) * h * (E_Na - Vs)
+I_Ks(Vs,ns) = g_Ks * (E_Ks - Vs)
+I_CaL = g_CaL * (E_CaL - Vs)
+I_K = g_K * (E_Ks - Vs)
+I_KCa = g_KCa * (E_KCa - Vs)
+I_L = g_L * (E_L - Vs)
+I_couple = nd*gc*((rd**2)*rs/ls*(ls*rs**2+ld*rd**2))*(Vd-Vs)
+
+d(Vs)/dt = I_app + I_Ks + I_Na + I_CaL + I_K + I_KCa +I_L + I_couple
+
+
+
+
+
+
+
